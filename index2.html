@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Obchvat Krnova v číslech</title>
+<meta name="description" content="Nehody na severovýchodním obchvatu Krnova (silnice I/57) od jeho otevření v roce 2021: mapa, statistika a fakta o stavbě.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&display=swap">
+<style>
+/* --- Leaflet: nezbytné styly --- */
+.leaflet-pane,.leaflet-tile,.leaflet-marker-icon,.leaflet-marker-shadow,.leaflet-tile-container,.leaflet-pane>svg,.leaflet-pane>canvas,.leaflet-zoom-box,.leaflet-image-layer,.leaflet-layer{position:absolute;left:0;top:0}
+.leaflet-container{overflow:hidden;-webkit-tap-highlight-color:transparent;background:#eef0ea;outline-offset:1px}
+.leaflet-tile,.leaflet-marker-icon,.leaflet-marker-shadow{user-select:none;-webkit-user-drag:none}
+.leaflet-container img.leaflet-tile{max-width:none!important;max-height:none!important}
+.leaflet-tile{filter:inherit;visibility:hidden}.leaflet-tile-loaded{visibility:inherit}
+.leaflet-container.leaflet-touch-drag{touch-action:pinch-zoom}
+.leaflet-container.leaflet-touch-drag.leaflet-touch-zoom{touch-action:none}
+.leaflet-pane{z-index:400}.leaflet-tile-pane{z-index:200}.leaflet-overlay-pane{z-index:400}.leaflet-shadow-pane{z-index:500}.leaflet-marker-pane{z-index:600}.leaflet-tooltip-pane{z-index:650}.leaflet-popup-pane{z-index:700}
+.leaflet-map-pane canvas{z-index:100}.leaflet-map-pane svg{z-index:200}
+.leaflet-marker-icon,.leaflet-marker-shadow,.leaflet-image-layer,.leaflet-pane>svg path,.leaflet-tile-container{pointer-events:none}
+.leaflet-marker-icon.leaflet-interactive,.leaflet-pane>svg path.leaflet-interactive{pointer-events:auto}
+.leaflet-interactive{cursor:pointer}.leaflet-grab{cursor:grab}.leaflet-dragging .leaflet-grab,.leaflet-dragging .leaflet-interactive{cursor:move}
+.leaflet-zoom-animated{transform-origin:0 0}
+.leaflet-zoom-anim .leaflet-zoom-animated{transition:transform .25s cubic-bezier(0,0,.25,1)}
+.leaflet-zoom-anim .leaflet-tile,.leaflet-pan-anim .leaflet-tile{transition:none}
+.leaflet-zoom-anim .leaflet-zoom-hide{visibility:hidden}
+.leaflet-control{position:relative;z-index:800;pointer-events:auto;float:left;clear:both}
+.leaflet-top,.leaflet-bottom{position:absolute;z-index:1000;pointer-events:none}
+.leaflet-top{top:0}.leaflet-right{right:0}.leaflet-bottom{bottom:0}.leaflet-left{left:0}
+.leaflet-right .leaflet-control{float:right}
+.leaflet-top .leaflet-control{margin-top:10px}.leaflet-bottom .leaflet-control{margin-bottom:10px}
+.leaflet-left .leaflet-control{margin-left:10px}.leaflet-right .leaflet-control{margin-right:10px}
+.leaflet-bar{box-shadow:0 1px 4px rgba(0,0,0,.3);border-radius:6px}
+.leaflet-bar a{display:block;width:34px;height:34px;line-height:34px;text-align:center;background:#fff;color:#1d2433;text-decoration:none;font:600 20px/34px system-ui,sans-serif;border-bottom:1px solid #d9dce3}
+.leaflet-bar a:first-child{border-radius:6px 6px 0 0}.leaflet-bar a:last-child{border-radius:0 0 6px 6px;border-bottom:none}
+.leaflet-bar a.leaflet-disabled{color:#b5b9c2;cursor:default}
+.leaflet-control-attribution{background:rgba(255,255,255,.85);margin:0!important;padding:1px 6px;font-size:11px;color:#444}
+.leaflet-control-attribution a{color:#2b4a8b}
+.leaflet-popup{position:absolute;text-align:center;margin-bottom:20px}
+.leaflet-popup-content-wrapper{padding:1px;text-align:left;border-radius:10px;background:#fff;box-shadow:0 4px 18px rgba(0,0,0,.25)}
+.leaflet-popup-content{margin:12px 14px;line-height:1.4;min-width:220px}
+.leaflet-popup-tip-container{width:40px;height:20px;position:absolute;left:50%;margin-top:-1px;margin-left:-20px;overflow:hidden;pointer-events:none}
+.leaflet-popup-tip{width:17px;height:17px;padding:1px;margin:-10px auto 0;transform:rotate(45deg);background:#fff}
+.leaflet-popup-close-button{position:absolute;top:2px;right:2px;border:none;width:28px;height:28px;font:20px/28px system-ui,sans-serif;color:#6b7280;text-decoration:none;text-align:center;background:transparent}
+.leaflet-tooltip{position:absolute;padding:3px 8px;background:#fff;border-radius:6px;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,.3);pointer-events:none;font-size:13px;color:#1d2433}
+.leaflet-tooltip-right{margin-left:8px}.leaflet-tooltip-left{margin-left:-8px}
+
+/* --- Stránka --- */
+:root{--ink:#1d2433;--muted:#5b6474;--line:#e3e6ec;--bg:#f6f7f9;--card:#fff;--accent:#24407a;
+  --s0:#7b8494;--s1:#e0a100;--s2:#e8590c;--s3:#9d0208}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);background:var(--bg);font-size:17px;line-height:1.5}
+a{color:var(--accent)}
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+header{background:#1d2433;color:#fff;padding:36px 0 30px}
+header .eyebrow{font-size:14px;letter-spacing:.06em;text-transform:uppercase;color:#aeb8cc;margin:0 0 6px}
+header h1{margin:0;font-size:clamp(30px,5vw,44px);line-height:1.1}
+header p.lead{margin:12px 0 0;color:#d5dbe7;max-width:640px;font-size:18px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:-22px}
+.kpi{background:var(--card);border-radius:12px;padding:16px 18px;box-shadow:0 1px 3px rgba(16,24,40,.08),0 1px 2px rgba(16,24,40,.04)}
+.kpi .v{font-size:34px;font-weight:700;line-height:1.1;font-variant-numeric:tabular-nums}
+.kpi .l{color:var(--muted);font-size:15px;margin-top:2px}
+.kpi.death .v{color:var(--s3)}
+section{margin:28px 0}
+h2{font-size:24px;margin:0 0 6px}
+.sub{color:var(--muted);margin:0 0 14px}
+.mapcard{background:var(--card);border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(16,24,40,.08)}
+.filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line)}
+.chip{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 12px;font:inherit;font-size:15px;cursor:pointer;color:var(--ink)}
+.chip .dot{width:12px;height:12px;border-radius:50%;background:var(--c);border:2px solid #fff;box-shadow:0 0 0 1px var(--c)}
+.chip[aria-pressed="false"]{opacity:.45;text-decoration:line-through}
+.chip .n{color:var(--muted);font-variant-numeric:tabular-nums}
+select{font:inherit;font-size:15px;padding:5px 10px;border-radius:8px;border:1px solid var(--line);background:#fff;color:var(--ink)}
+.filters .count{margin-left:auto;color:var(--muted);font-size:15px}
+#map{height:min(68vh,560px);min-height:380px}
+.maphint{padding:8px 14px;font-size:14px;color:var(--muted);border-top:1px solid var(--line)}
+.pp .sev{display:inline-block;font-weight:700;font-size:13px;color:#fff;background:var(--c);border-radius:4px;padding:1px 7px;margin-bottom:6px}
+.pp dl{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;margin:6px 0 4px;font-size:14px}
+.pp dt{color:var(--muted)}.pp dd{margin:0}
+.pp .when{font-weight:700;font-size:15px}
+.hotlabel{font-weight:600}
+details{background:var(--card);border-radius:12px;box-shadow:0 1px 3px rgba(16,24,40,.08);margin:12px 0}
+summary{cursor:pointer;padding:16px 20px;font-size:20px;font-weight:700;list-style:none;display:flex;justify-content:space-between;align-items:center}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font-size:26px;color:var(--muted);font-weight:400}
+details[open] summary::after{content:"−"}
+summary small{display:block;font-size:15px;font-weight:400;color:var(--muted)}
+.dbody{padding:0 20px 20px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+h3{font-size:17px;margin:18px 0 8px}
+.bars{display:grid;grid-template-columns:auto 1fr auto;gap:6px 10px;align-items:center;font-size:15px}
+.bars .lab{color:var(--ink)}
+.bars .track{height:16px;display:flex;border-radius:3px;overflow:hidden}
+.bars .seg{height:100%}
+.bars .val{font-variant-numeric:tabular-nums;color:var(--muted);text-align:right;min-width:2ch}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:14px;color:var(--muted);margin:4px 0 10px}
+.legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--c);margin-right:5px;vertical-align:-1px}
+.note{font-size:14px;color:var(--muted);margin-top:8px}
+.hot{list-style:none;padding:0;margin:0}
+.hot li{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.hot li:last-child{border-bottom:none}
+.hot b{display:block}
+.hot small{color:var(--muted)}
+button.link{font:inherit;font-size:15px;color:var(--accent);background:none;border:1px solid var(--line);border-radius:8px;padding:5px 10px;cursor:pointer;white-space:nowrap}
+.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:8px 0 16px}
+.fact{border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.fact .v{font-size:22px;font-weight:700}
+.fact .l{font-size:14px;color:var(--muted)}
+.timeline{list-style:none;padding:0;margin:8px 0 0;border-left:2px solid var(--line)}
+.timeline li{position:relative;padding:0 0 14px 18px}
+.timeline li::before{content:"";position:absolute;left:-7px;top:6px;width:12px;height:12px;border-radius:50%;background:#fff;border:2px solid var(--accent)}
+.timeline b{display:block}
+.src{font-size:15px;padding-left:20px}
+footer{color:var(--muted);font-size:14px;padding:24px 0 40px;border-top:1px solid var(--line);margin-top:32px}
+@media (max-width:760px){
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .grid2{grid-template-columns:1fr}
+  .facts{grid-template-columns:repeat(2,1fr)}
+  .filters .count{margin-left:0;width:100%}
+  body{font-size:16px}
+}
+
+/* --- navigace a stránky --- */
+header.top{position:sticky;top:0;z-index:2000;background:#1d2433;color:#fff;padding:0;box-shadow:0 1px 6px rgba(0,0,0,.25)}
+.topin{display:flex;align-items:center;gap:20px;min-height:58px;flex-wrap:wrap}
+.brand{color:#fff;text-decoration:none;font-weight:700;font-size:19px;white-space:nowrap}
+.brand span{color:#aeb8cc;font-weight:400}
+nav{display:flex;gap:4px;margin-left:auto;overflow-x:auto}
+nav a{color:#d5dbe7;text-decoration:none;padding:8px 12px;border-radius:8px;white-space:nowrap;font-size:16px}
+nav a:hover{background:rgba(255,255,255,.08);color:#fff}
+nav a.active{background:#fff;color:#1d2433;font-weight:600}
+.hero{background:#24304a;color:#fff;padding:40px 0 64px}
+.hero .eyebrow{font-size:14px;letter-spacing:.06em;text-transform:uppercase;color:#aeb8cc;margin:0 0 8px}
+.hero h1{margin:0;font-size:clamp(28px,4.6vw,42px);line-height:1.15;max-width:760px}
+.hero .lead{margin:14px 0 0;color:#d5dbe7;max-width:680px;font-size:18px}
+.cards3{position:relative;z-index:5;display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:-36px}
+.navcard{display:flex;flex-direction:column;gap:4px;background:#fff;border-radius:12px;padding:18px;text-decoration:none;color:var(--ink);box-shadow:0 1px 3px rgba(16,24,40,.1);border:1px solid transparent}
+.navcard:hover{border-color:var(--accent)}
+.navcard b{font-size:19px}.navcard span{color:var(--muted);font-size:15px}.navcard em{font-style:normal;color:var(--accent);font-weight:600;margin-top:auto;padding-top:6px}
+.block{background:#fff;border-radius:12px;padding:22px 24px;box-shadow:0 1px 3px rgba(16,24,40,.08)}
+.block h2{margin-bottom:10px}
+.twocol{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+.ticks,.crosses{padding:0;margin:0;list-style:none}
+.ticks li,.crosses li{padding:5px 0 5px 28px;position:relative}
+.ticks li::before{content:"✓";position:absolute;left:4px;color:#2f7d32;font-weight:700}
+.crosses li::before{content:"✕";position:absolute;left:4px;color:#b42318;font-weight:700}
+.asofbox{border-left:4px solid var(--accent)}
+.ptitle{font-size:30px;margin:26px 0 4px}
+.panel{background:#fff;border-radius:12px;padding:6px 20px 18px;box-shadow:0 1px 3px rgba(16,24,40,.08)}
+.grid2{gap:16px}
+.grid2 .wide{grid-column:1/-1}
+.narrow{max-width:820px}
+.view .kpis{margin:6px 0 16px}
+#map{height:calc(100vh - 230px);min-height:420px}
+@media (max-width:760px){
+  .cards3,.twocol{grid-template-columns:1fr}
+  .topin{gap:4px;padding-top:8px;padding-bottom:6px}
+  nav{margin-left:-6px;width:100%}
+  nav a{padding:7px 10px;font-size:15px}
+  #map{height:65vh}
+}
+
+.hero{position:relative;overflow:hidden}
+.hero .wrap{position:relative;z-index:3}
+#heroMap{position:absolute;inset:0;z-index:1;background:#24304a}
+#heroMap .leaflet-control-container{display:none}
+.heroShade{position:absolute;inset:0;z-index:2;background:linear-gradient(90deg,rgba(20,27,43,.88) 0%,rgba(20,27,43,.7) 45%,rgba(20,27,43,.35) 100%);pointer-events:none}
+.heroCap{position:absolute;right:12px;bottom:44px;z-index:3;font-size:12px;color:#e3e7ef;text-align:right;text-shadow:0 1px 2px rgba(0,0,0,.6)}
+.heroCap a{color:#e3e7ef}
+.heroCap img{height:18px;vertical-align:middle;margin-left:6px}
+.hero{padding:56px 0 80px}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap topin">
+    <a class="brand" href="#">Obchvat Krnova <span>v číslech</span></a>
+    <nav aria-label="Hlavní menu">
+      <a href="#" data-view="uvod">Úvod</a>
+      <a href="#mapa" data-view="mapa">Mapa nehod</a>
+      <a href="#statistika" data-view="statistika">Statistika</a>
+      <a href="#data" data-view="data">O datech</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ===== ÚVOD ===== -->
+<main class="view" id="v-uvod">
+  <div class="hero">
+    <div id="heroMap" aria-hidden="true"></div>
+    <div class="heroShade"></div>
+    <div class="heroCap" id="heroCap"></div>
+    <div class="wrap">
+      <p class="eyebrow">Silnice I/57 · severovýchodní obchvat Krnova</p>
+      <h1>Kolik nehod se stalo na obchvatu Krnova?</h1>
+      <p class="lead">Tato stránka přehledně ukazuje dopravní nehody na krnovském obchvatu od jeho otevření v roce 2021: kde se staly, jak vážné byly a co je způsobilo. Vychází z veřejných dat Policie ČR.</p>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="cards3">
+      <a class="navcard" href="#mapa"><b>Mapa nehod</b><span>Každá nehoda na mapě, s filtrem podle závažnosti a roku.</span><em>Otevřít mapu →</em></a>
+      <a class="navcard" href="#statistika"><b>Statistika</b><span>Počty po letech, druhy a příčiny nehod, nejrizikovější místa.</span><em>Zobrazit statistiku →</em></a>
+      <a class="navcard" href="#data"><b>O datech</b><span>Odkud data jsou, jak jsme počítali a co neukazují.</span><em>Více o datech →</em></a>
+    </div>
+
+    <section class="block">
+      <h2>O obchvatu</h2>
+      <p>Severovýchodní obchvat odvádí tranzitní dopravu silnice I/57 (Opava – Krnov – Město Albrechtice) mimo centrum Krnova. Stavbu připravovalo Ředitelství silnic a dálnic zhruba dvacet let, samotná výstavba trvala přes čtyři roky. Řidiči po obchvatu jezdí od konce září 2021.</p>
+      <div class="facts">
+        <div class="fact"><div class="v">7,7 km</div><div class="l">délka hlavní trasy</div></div>
+        <div class="fact"><div class="v">≈ 1 mld. Kč</div><div class="l">cena stavby</div></div>
+        <div class="fact"><div class="v">85 %</div><div class="l">uhradila EU (44 mil. €)</div></div>
+        <div class="fact"><div class="v">3,6 km</div><div class="l">protihlukových stěn</div></div>
+        <div class="fact"><div class="v">S 11,5/80</div><div class="l">kategorie silnice</div></div>
+        <div class="fact"><div class="v">2021</div><div class="l">rok otevření</div></div>
+      </div>
+      <h3>Časová osa</h3>
+      <ul class="timeline">
+        <li><b>Přibližně od roku 2000</b>Příprava stavby, projekty a povolení.</li>
+        <li><b>Srpen 2017</b>Začátek projektu spolufinancovaného z fondů EU.</li>
+        <li><b>Únor 2021</b>Původní termín dokončení, který se nestihl.</li>
+        <li><b>Konec září 2021</b>Zkušební provoz, ještě bez kolaudace.</li>
+        <li><b>Prosinec 2021</b>Plný provoz.</li>
+        <li><b>Květen 2022</b>Ukončení projektu EU.</li>
+      </ul>
+    </section>
+
+    <section class="block twocol">
+      <div>
+        <h2>Co se započítává</h2>
+        <ul class="ticks">
+          <li>Nehody, které vyšetřovala a evidovala Policie ČR.</li>
+          <li>Úsek od kruhového objezdu na Opavské po Albrechtickou ulici u Opavice (7,3 km).</li>
+          <li>Nehody přímo na obchvatu a v jeho křižovatkách, včetně křižovatky s Petrovickou (I/45).</li>
+          <li>Období od 1. září 2021.</li>
+        </ul>
+      </div>
+      <div>
+        <h2>Co se nezapočítává</h2>
+        <ul class="crosses">
+          <li>Drobné nehody, které si účastníci vyřešili sami záznamem pro pojišťovnu. Policie je neeviduje, skutečný počet nehod je proto vyšší.</li>
+          <li>Nehody na souběžných místních ulicích a na původní trase přes město.</li>
+          <li>Osobní údaje účastníků. Data jsou anonymní.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="block asofbox">
+      <h2>Jak jsou data aktuální</h2>
+      <p>Údaje jsou platné k <b class="asof"></b>. Policie zveřejňuje nehody se zpožděním přibližně jednoho až dvou měsíců. Stránku aktualizujeme jednou měsíčně, jakmile jsou nová data k dispozici.</p>
+    </section>
+  </div>
+</main>
+
+<!-- ===== MAPA ===== -->
+<main class="view" id="v-mapa" hidden>
+  <div class="wrap">
+    <h1 class="ptitle">Mapa nehod</h1>
+    <p class="sub">Každý bod je jedna nehoda evidovaná policií. Kliknutím na bod zobrazíte podrobnosti. Stav k <span class="asof"></span>.</p>
+    <div class="mapcard">
+      <div class="filters" id="filters">
+        <select id="year" aria-label="Rok"><option value="">Všechny roky</option></select>
+        <span class="count" id="count"></span>
+      </div>
+      <div id="map" role="region" aria-label="Mapa nehod na obchvatu"></div>
+      <div class="maphint">Přibližujte tlačítky + a − nebo dvěma prsty. Kroužky označují nejrizikovější křižovatky.</div>
+    </div>
+  </div>
+</main>
+
+<!-- ===== STATISTIKA ===== -->
+<main class="view" id="v-statistika" hidden>
+  <div class="wrap">
+    <h1 class="ptitle">Statistika</h1>
+    <p class="sub">Nehody na obchvatu od 1. 9. 2021 do <span class="asof"></span>.</p>
+    <div class="kpis" id="kpis"></div>
+    <div class="grid2">
+      <div class="panel">
+        <h3>Nehody po letech</h3>
+        <div class="legend" id="sevlegend"></div>
+        <div class="bars" id="chart-years"></div>
+        <p class="note">Rok 2021 jen od září, rok 2026 jen do října.</p>
+      </div>
+      <div class="panel">
+        <h3>Nejrizikovější místa</h3>
+        <ul class="hot" id="hotlist"></ul>
+      </div>
+      <div class="panel">
+        <h3>Druh nehody</h3>
+        <div class="bars" id="chart-type"></div>
+      </div>
+      <div class="panel">
+        <h3>Hlavní příčina</h3>
+        <div class="bars" id="chart-cause"></div>
+        <p class="note">Příčinu určuje policie. „Nezaviněno řidičem“ jsou hlavně srážky se zvěří.</p>
+      </div>
+      <div class="panel wide">
+        <h3>Za jakých podmínek</h3>
+        <div class="bars" id="chart-cond"></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ===== O DATECH ===== -->
+<main class="view" id="v-data" hidden>
+  <div class="wrap narrow">
+    <h1 class="ptitle">O datech</h1>
+    <div class="panel">
+      <h3>Zdroje</h3>
+      <ul class="src">
+        <li>Nehody: Policie ČR, zveřejněno v aplikaci <a href="https://nehody.cdv.cz/">Dopravní nehody v ČR</a> Centra dopravního výzkumu. Stav dat k <span class="asof"></span>.</li>
+        <li>Trasa obchvatu: <a href="https://www.openstreetmap.org/copyright">© přispěvatelé OpenStreetMap</a>.</li>
+        <li>Stavba: <a href="https://kohesio.ec.europa.eu/cs/projects/Q57715">EU Kohesio – projekt I/57 Krnov, severovýchodní obchvat</a>, <a href="https://ct24.ceskatelevize.cz/clanek/regiony/obchvat-krnova-se-provizorne-otevrel-plny-provoz-zacne-v-prosinci-28633">ČT24</a>, <a href="https://www.seznamzpravy.cz/clanek/stat-otevrel-tesne-pred-volbami-mestsky-obchvat-bez-souhlasu-uradu-a-policie-176304">Seznam Zprávy</a>, <a href="https://ct24.ceskatelevize.cz/moravskoslezskykraj/3367626-po-krnovskem-obchvatu-se-zacne-jezdit-v-zari-radnice-zada-snizeni">ČT24 (příprava stavby)</a>.</li>
+      </ul>
+      <h3>Jak jsme počítali</h3>
+      <ul class="src">
+        <li>Úsek: od kruhového objezdu na Opavské po Albrechtickou ulici u Opavice (7,3 km podle Mapy.com).</li>
+        <li>Započítány jsou nehody do 60 m od osy silnice, evidované na silnici I/57 nebo v její křižovatce se silnicí I/45. Nehody na souběžných místních komunikacích nepočítáme.</li>
+        <li>Období: od 1. 9. 2021 do <span class="asof"></span>.</li>
+        <li>Závažnost podle nejtěžšího následku: smrtelná (úmrtí do 30 dnů), s těžkým zraněním, s lehkým zraněním, bez zranění (jen hmotná škoda).</li>
+      </ul>
+      <h3>Co data neukazují</h3>
+      <p>Policie neeviduje drobné nehody, které si účastníci vyřeší sami záznamem pro pojišťovnu. Skutečný počet nehod je proto vyšší. Data neobsahují žádné osobní údaje účastníků.</p>
+      <h3>Autor</h3>
+      <p>Stránku připravil Pavel Prokopec jako nezávislý občanský projekt. Nejde o oficiální stránku města Krnova ani Ředitelství silnic a dálnic.</p>
+      <h3>Aktualizace</h3>
+      <p>Data jsou platná k <span class="asof"></span>. Policie je zveřejňuje se zpožděním přibližně jednoho až dvou měsíců, stránku aktualizujeme jednou měsíčně.</p>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    Připravil Pavel Prokopec, nezávislý občanský projekt · Data o nehodách: Policie ČR / CDV, stav k <span class="asof"></span> · Nejde o oficiální stránku města ani ŘSD.
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+// ====== NASTAVENÍ ======
+// Klíč k Mapy.com (zdarma na developer.mapy.com). Prázdný = mapový podklad OpenStreetMap.
+const MAPY_API_KEY = 'mvMKHU_rG6qfwNeGqnV0K12Djw0jJOEyvkdzxP2pfao';
+const DATA_ASOF = '31. 10. 2026';
+
+// ====== DATA ======
+const RAW = {"dict":{"druh":["jiný druh nehody","srážka s jedoucím nekolejovým vozidlem","srážka s pevnou překážkou","srážka s lesní zvěří","havárie","srážka s domácím zvířetem","srážka s vozidlem zaparkovaným, odstaveným"],"pricina":["nezvládnutí řízení vozidla","proti příkazu dopravní značky DEJ PŘEDNOST","nezaviněná řidičem","při předjíždění došlo k ohrožení předjížděného řidiče vozidla (vynucené zařazení, předjížděný řidič musel prudce brzdit, měnit směr jízdy apod.)","řidič se plně nevěnoval řízení vozidla","předjíždění vlevo vozidla odbočujícího vlevo","nedodržení bezpečné vzdálenosti za vozidlem","jiný druh nesprávného způsobu jízdy","nepřizpůsobení rychlosti vlastnostem vozidla a nákladu","při odbočování vlevo","nepřizpůsobení rychlosti stavu vozovky (náledí, výtluky, bláto, mokrý povrch apod.)","proti příkazu dopravní značky STŮJ DEJ PŘEDNOST","jiný druh nepřiměřené rychlosti","jízda po nesprávné straně vozovky, vjetí do protisměru","při předjíždění došlo k ohrožení protijedoucího řidiče vozidla (špatný odhad vzdálenosti potřebné k předjetí apod.)","chyby při udání směru jízdy"],"smer":["přímý úsek","křižovatka průsečná - čtyřramenná","křižovatka styková - tříramenná","kruhový objezd","zatáčka"],"zver":["","nejde o srážku se zvěří/zvířetem","pes","divoké prase","srna, srnec"],"prekazka":["nepřichází v úvahu, nejedná se o srážku s pevnou překážkou","svodidlo","odrazník, patník, sloupek směrový, sloupek dopravní značky apod.","jiná překážka (zábradlí, oplocení, násep, nástupní ostrůvek apod.)","strom"]},"cols":["id","lat","lng","silnice","datum","druh","pricina","usmrceno","tezce","lehce","skoda","vozidel","alkohol","krizovatka","smer","noc","mokro","zver","prekazka","vozidla"],"rows":[[70106210639,50.12012,17.64066,"57","2021-09-23 08:15",0,0,0,0,0,5000,2,0,0,0,0,0,0,0,"nákladní automobil; osobní automobil bez přívěsu"],[70106210670,50.09832,17.69849,"45","2021-10-06 07:30",1,1,0,0,1,345000,2,0,1,1,0,0,0,0,"osobní automobil bez přívěsu; osobní automobil bez přívěsu"],[70106210699,50.10059,17.67745,"57","2021-10-14 08:25",2,0,0,0,0,40000,1,0,1,2,0,1,0,1,"osobní automobil bez přívěsu"],[70106210715,50.09058,17.72656,"57","2021-10-19 19:20",3,2,0,0,0,22000,1,0,0,0,1,0,0,0,"osobní automobil bez přívěsu"],[70106210731,50.10891,17.64953,"57","2021-10-24 10:50",1,3,0,0,0,61000,3,0,0,0,0,0,0,0,"nákladní automobil s přívěsem; osobní automobil bez přívěsu; osobní automobil bez přívěsu"],[70106210732,50.08247,17.72899,"57","2021-10-25 02:50",4,0,0,0,0,10000,1,1,1,3,1,0,0,0,"osobní automobil bez přívěsu"],[70106210775,50.10998,17.64864,"57","2021-11-07 08:53",1,4,0,0,1,572000,2,0,0,0,0,0,0,0,"osobní automobil bez přívěsu; osobní automobil bez přívěsu"],[70106210780,50.09834,17.69851,"57","2021-11-07 19:15",1,1,0,0,2,365000,2,0,1,1,1,0,0,0,"osobní automobil bez přívěsu; osobní automobil bez přívěsu"],[70106210803,50.11324,17.64609,"57","2021-11-18 13:55",1,5,0,0,0,100000,2,0,0,0,0,0,0,0,"nákladní automobil; osobní automobil bez přívěsu"],[70106210806,50.10552,17.65419,"57","2021-11-19 17:00",3,2,0,0,0,12000,1,0,0,0,1,0,0,0,"osobní automobil bez přívěsu"],[70106210822,50.117,17.6432,"57","2021-11-22 16:35",1,6,0,0,1,70000,3,0,0,0,1,1,0,0,"osobní automobil bez přívěsu; traktor; nákladní automobil"],[70106210869,50.09833,17.69848,"45","2021-12-09 05:35",1,1,0,0,1,310000,2,0,1,1,1,1,0,0,"osobní automobil bez přívěsu; osobní automobil bez přívěsu"],[70106210870,50.10536,17.65466,"57","2021-12-09 05:25",3,2,0,0,0,52000,1,0,0,0,1,1,0,0,"osobní automobil bez přívěsu"],[70106220004,50.11014,17.64863,"57","2022-01-03 22:20",3,2,0,0,0,40000,1,0,0,0,1,0,0,0,"osobní automobil bez přívěsu"],[70106220123,50.09813,17.69852,"57","2022-03-09 17:50",1,1,0,0,0,175000,2,0,1,1,0,0,0,0,"osobní automobil bez přívěsu; osobní automobil bez přívěsu"],[70106220131,50.11612,17.64395,"57","2022-03-14 05:15",3,2,0,0,0,42000,1,0,0,0,1,0,0,0,"osobní automobil bez přívěsu"],[70106220160,50.10872,17.64971,"57","2022-03-26 08:20",0,4,0,0,2,300000,2,0,0,0,0,0,0,0,"osobní automobil bez přívěsu; nákladní automobil"],[70106220168,50.09831,17.69849,"45","2022-03-27 14:00",1,1,0,0,1,170000,2,0,1,1,0,0,0,0,"osobní automobil bez přívěsu; osobní automobil bez přívěsu"],[70106220193,50.10704,17.65136,"57","2022-04-06 07:??",1,6,0,0,1,130000,2,0,0,0,0,0,0,0,"nákladní automobil s návěsem; nákladní automobil"],[70106220209,50.11564,17.64438,"57","2022-04-14 03:00",3,2,0,0,0,43000,1,0,0,0,1,0,0,0,"osobní automobil bez přívěsu"],[70106220262,50.09834,17.69852,"45","2022-05-05 11:15",1,1,0,0,0,150000,2,0,1,1,0,0,0,0,"osobní automobil bez přívěsu; osobní automobil bez přívěsu"],[70106220298,50.09832,17.6985,"57","2022-05-19 18:35",1,1,0,0,0,310000,2,0,1,1,0,0,0,0,"osobní automobil bez přívěsu; nákladní automobil s návěsem"],[70106220320,50.12028,17.64064,"57","2022-05-27 13:45",3,2,0,0,0,20000,1,0,0,0,0,1,0,0,"osobní automobil bez přívěsu"],[70106220351,50.09698,17.71321,"57","2022-06-09 20:00",1,1,0,0,0,140500,2,0,1,1,0,1,0,0,"osobní automobil bez přívěsu; nákladní automobil"],[70106220390,50.09752,17.70954,"57","2022-06-23 00:30",3,2,0,0,0,110000,1,0,0,0,1,0,0,0,"osobní automobil bez přívěsu"],[70106220450,50.08261,17.72924,"57","2022-07-14 15:15",2,4,0,0,0,45000,1,0,1,3,0,0,0,2,"osobní automobil bez přívěsu"],[70106220452,50.09832,17.6985,"45","2022-07-14 20:35",1,1,0,0,0,150000,2,0,1,1,0,1,0,0,"osobní automobil bez přívěsu; osobní automobil bez přívěsu"],[70106220464,50.10722,17.6512,"57","2022-07-19 21:30",3,2,0,0,0,30000,1,0,0,0,1,0,0,0,"osobní automobil bez přívěsu"],[70106220534,50.10548,17.65445,"57","2022-08-13 04:15",3,2,0,0,0,72000,1,0,0,4,1,0,0,0,"osobní automobil bez přívěsu"],[70106220612,50.09263,17.72426,"57","2022-09-09 19:55",3,2,0,0,0,5000,1,0,0,0,1,0,0,0,"osobní automobil bez přívěsu"],[70106220613,50.09255,17.72411,"57","2022-09-09 19:56",3,2,0,0,0,10000,1,0,0,0,1,0,0,0,"osobní automobil bez přívěsu"],[70106220624,50.09425,17.72218,"57","2022-09-13 19:40",2,4,0,0,1,1200,1,1,0,0,1,0,0,1,"jiné nemotorové vozidlo"],[70106220736,50.09832,17.69854,"57","2022-10-23 13:45",1,1,0,0,0,145000,2,0,1,1,0,0,0,0,"osobní automobil bez přívěsu; osobní automobil bez přívěsu"],[70106220811,50.12366,17.63805,"57","2022-06-02 11:40",0,7,0,0,1,0,1,0,0,0,0,0,0,0,"autobus"],[70106220821,50.09834,17.69846,"57","2022-11-19 22:??",1,1,0,0,3,420000,2,0,0,0,1,0,0,0,"osobní automobil bez přívěsu; osobní automobil bez přívěsu"],[70123000019,50.09834,17.69852,"57","2023-01-08 13:20",1,1,0,0,1,720000,2,0,1,1,0,0,1,0,"osobní automobil bez přívěsu; nákladní automobil"],[70123000056,50.0983,17.69849,"45","2023-01-23 16:10",1,1,0,0,0,130000,2,0,1,1,0,1,1,0,"osobní automobil bez přívěsu; osobní automobil bez přívěsu"],[70123000214,50.11514,17.64464,"57","2023-04-19 09:50",2,8,0,0,0,36000,1,0,0,0,0,1,1,2,"osobní automobil bez přívěsu"],[70123000667,50.10459,17.65959,"57","2023-10-05 10:35",1,9,0,0,1,182000,2,0,1,2,0,0,1,0,"osobní automobil bez přívěsu; osobní automobil bez přívěsu"],[70123000686,50.11065,17.64805,"57","2023-10-11 08:20",5,2,0,0,0,20000,1,0,0,0,0,0,2,0,"osobní automobil bez přívěsu"],[70123000739,50.12207,17.63927,"57","2023-10-27 04:40",3,2,0,0,0,30000,1,0,0,0,1,1,3,0,"nákladní automobil"],[70123000795,50.10469,17.65798,"57","2023-11-13 16:45",3,2,0,0,0,20000,1,0,0,0,1,0,4,0,"osobní automobil bez přívěsu"],[70123000860,50.09844,17.69657,"57","2023-11-30 09:05",2,10,0,0,0,110000,1,0,0,0,0,1,1,1,"osobní automobil bez přívěsu"],[70123000903,50.10462,17.65925,"57","2023-12-16 08:25",1,11,0,0,0,165000,2,1,1,2,0,1,1,0,"osobní automobil bez přívěsu; osobní automobil bez přívěsu"],[70124000047,50.09832,17.69849,"45","2024-01-20 13:10",1,11,0,0,0,105000,2,0,1,1,0,1,1,0,"osobní automobil bez přívěsu; osobní automobil s přívěsem"],[70124000186,50.09698,17.71323,"57","2024-03-28 04:20",1,11,0,0,1,100000,2,0,1,1,1,0,1,0,"nákladní automobil; nákladní automobil"],[70124000189,50.08563,17.7293,"57","2024-03-28 19:10",3,2,0,0,0,72000,1,0,0,0,1,1,4,0,"osobní automobil bez přívěsu"],[70124000190,50.08551,17.72918,"57","2024-03-28 19:30",2,12,0,0,1,0,1,0,0,0,1,1,1,3,"motocykl"],[70124000193,50.10508,17.65574,"57","2024-03-30 05:05",3,2,0,0,0,12000,1,0,0,0,0,0,4,0,"nákladní automobil"],[70124000209,50.10461,17.65932,"57","2024-04-05 13:12",1,11,0,0,0,220000,2,0,1,2,0,0,1,0,"osobní automobil bez přívěsu; osobní automobil bez přívěsu"],[70124000254,50.1095,17.64906,"57","2024-04-18 15:35",1,13,0,0,0,70000,2,0,0,0,0,0,1,0,"osobní automobil bez přívěsu; traktor"],[70124000263,50.11873,17.64174,"57","2024-04-21 19:45",3,2,0,0,0,20000,1,0,0,0,1,1,4,0,"osobní automobil bez přívěsu"],[70124000375,50.09643,17.71625,"57","2024-06-01 19:15",3,2,0,0,0,12000,1,0,0,0,0,0,4,0,"osobní automobil bez přívěsu"],[70124000408,50.11663,17.64349,"57","2024-06-15 03:30",3,2,0,0,0,72000,1,0,0,0,1,0,4,0,"osobní automobil bez přívěsu"],[70124000451,50.09831,17.69851,"57","2024-06-30 17:55",1,9,0,0,1,400000,2,0,1,1,0,1,1,0,"osobní automobil bez přívěsu; osobní automobil bez přívěsu"],[70124000493,50.0988,17.6902,"57","2024-07-18 18:??",2,4,0,0,0,120000,1,0,0,0,0,0,1,1,"nákladní automobil"],[70124000500,50.10381,17.66904,"57","2024-07-22 05:48",6,4,0,0,0,61000,2,0,0,0,0,0,1,0,"osobní automobil bez přívěsu; nákladní automobil"],[70124000535,50.12133,17.63981,"57","2024-08-02 13:30",1,6,0,0,0,350000,2,0,0,0,0,0,1,0,"osobní automobil bez přívěsu; osobní automobil bez přívěsu"],[70124000612,50.10461,17.66359,"57","2024-08-27 20:10",3,2,0,0,0,50000,1,0,0,0,0,0,4,0,"osobní automobil bez přívěsu"],[70124000816,50.10463,17.65935,"57","2024-10-29 07:00",1,11,0,0,1,300000,2,0,1,2,0,0,1,0,"osobní automobil bez přívěsu; nákladní automobil"],[70124000826,50.11852,17.64199,"57","2024-11-02 06:20",3,2,0,0,0,36000,1,0,0,0,0,0,4,0,"osobní automobil bez přívěsu"],[70124000839,50.11919,17.64147,"57","2024-11-06 13:35",2,4,0,0,1,110000,1,0,0,0,0,0,1,4,"osobní automobil bez přívěsu"],[70124000906,50.10788,17.65032,"57","2024-11-30 14:45",3,2,0,0,0,83000,1,0,0,0,0,1,4,0,"osobní automobil bez přívěsu"],[70124000928,50.0983,17.69852,"57","2024-12-07 15:15",1,11,0,0,0,20000,2,0,0,1,0,0,1,0,"nákladní automobil; osobní automobil bez přívěsu"],[70124000992,50.10028,17.6783,"57","2024-12-26 19:35",2,4,0,0,1,750000,1,0,0,0,1,0,1,3,"osobní automobil bez přívěsu"],[70125000012,50.10455,17.66256,"57","2025-01-07 18:10",5,2,0,0,0,40000,1,0,0,0,1,0,2,0,"osobní automobil bez přívěsu"],[70125000091,50.09831,17.69851,"57","2025-02-10 14:40",1,11,0,0,0,220000,4,0,0,1,0,0,1,0,"osobní automobil bez přívěsu; osobní automobil bez přívěsu; nákladní automobil; nákladní automobil"],[70125000156,50.10463,17.65929,"57","2025-03-20 12:??",1,9,0,0,1,170000,2,0,1,2,0,0,1,0,"osobní automobil bez přívěsu; nákladní automobil"],[70125000246,50.10465,17.6593,"57","2025-05-16 17:??",1,9,0,0,0,253000,2,0,1,2,0,0,1,0,"osobní automobil bez přívěsu; osobní automobil bez přívěsu"],[70125000323,50.09698,17.71323,"57","2025-06-26 17:55",1,11,0,0,3,300000,2,0,1,1,0,0,1,0,"osobní automobil bez přívěsu; osobní automobil bez přívěsu"],[70125000452,50.10751,17.65078,"57","2025-08-22 10:32",1,14,0,0,0,10000,2,0,0,0,0,0,1,0,"nezjištěno, řidič ujel; osobní automobil bez přívěsu"],[70125000613,50.09833,17.6986,"57","2025-11-15 15:15",1,11,0,0,1,3200000,2,0,1,1,0,0,1,0,"osobní automobil bez přívěsu; osobní automobil bez přívěsu"],[70125000641,50.09976,17.67963,"57","2025-11-29 23:50",2,10,0,0,0,60000,1,0,0,0,1,1,1,1,"osobní automobil bez přívěsu"],[70125000642,50.09884,17.6823,"57","2025-11-30 19:05",2,10,0,0,0,17000,1,0,0,4,1,1,1,1,"osobní automobil bez přívěsu"],[70125000689,50.09697,17.71326,"57","2025-12-19 17:05",1,1,0,0,2,400000,2,0,1,1,1,0,1,0,"osobní automobil bez přívěsu; osobní automobil bez přívěsu"],[70125000692,50.11714,17.64315,"57","2025-12-22 07:38",4,4,0,0,1,252000,1,0,0,0,0,1,1,0,"nákladní automobil"],[70126000045,50.10461,17.65929,"57","2026-01-19 17:49",1,9,1,0,1,140000,2,0,1,2,1,0,1,0,"nákladní automobil; osobní automobil bez přívěsu"],[70126000101,50.08933,17.72799,"57","2026-02-18 15:00",6,10,0,0,1,350000,2,0,0,0,0,1,1,0,"nákladní automobil; nákladní automobil"],[70126000196,50.09831,17.69858,"57","2026-04-17 00:15",1,11,0,0,1,110000,2,0,1,1,1,0,1,0,"osobní automobil bez přívěsu; osobní automobil bez přívěsu"],[70126000304,50.10463,17.65933,"57","2026-06-19 14:20",1,9,0,1,4,803000,2,0,1,2,0,0,1,0,"osobní automobil bez přívěsu; osobní automobil bez přívěsu"],[70126000317,50.09832,17.6985,"45","2026-06-25 08:10",1,9,0,0,2,450000,2,0,1,1,0,0,1,0,"osobní automobil bez přívěsu; osobní automobil bez přívěsu"],[70126000324,50.09827,17.69921,"57","2026-06-26 14:20",2,15,0,0,0,25000,1,0,0,0,0,0,1,2,"osobní automobil bez přívěsu"],[70126000368,50.09773,17.70746,"57","2026-07-16 19:20",2,12,0,0,0,5000,1,0,0,0,0,0,1,3,"osobní automobil bez přívěsu"],[70126000369,50.10463,17.66298,"57","2026-07-16 22:20",1,4,1,0,0,40000,2,0,0,0,1,0,1,0,"osobní automobil bez přívěsu; motocykl"],[70126000595,50.10454,17.66614,"57","2026-10-24 17:30",1,13,0,1,1,120000,2,1,0,0,0,0,1,0,"osobní automobil bez přívěsu; osobní automobil bez přívěsu"]]};
+const BYPASS = "12476,63701 12452,63725 12428,63747 12403,63771|12403,63771 12395,63777 12394,63778 12384,63786 12371,63797 12347,63816|12318,63839 12263,63881 12025,64066 11698,64321 11692,64326 11608,64391 11350,64592 11346,64595 11165,64734 11068,64811 11054,64822 11041,64832|12347,63816 12318,63839|11041,64832 11013,64854 10992,64870 10982,64878 10971,64887|12487,63689 12476,63701|10474,65767 10477,65744 10480,65722 10484,65700 10487,65679 10488,65673 10494,65643 10501,65609 10507,65584 10513,65560 10518,65539 10524,65519 10528,65504 10541,65465 10549,65440 10557,65417 10566,65395 10574,65373 10592,65331 10610,65295 10628,65260 10642,65234 10655,65210 10665,65195 10674,65180|10452,66632 10454,66612 10456,66594 10458,66575 10460,66554 10461,66537 10462,66515 10462,66505 10463,66494 10463,66472 10464,66428 10464,66353|9883,68973 9883,68958 9882,68939 9881,68917 9880,68895 9879,68875 9877,68854 9875,68830 9873,68807 9871,68783 9868,68754 9865,68723|9660,71531 9670,71476 9680,71420 9697,71322|8531,72912 8568,72922 8587,72927 8606,72930 8626,72933 8650,72934 8670,72934 8691,72933 8718,72928 8733,72925 8747,72921 8772,72912 8784,72907 8796,72902 8808,72896 8820,72889 8833,72882 8845,72874 8866,72859 8877,72850 8887,72842 8908,72823 8930,72801 8940,72790 8978,72748 9014,72707 9053,72666 9096,72617 9111,72599 9149,72556 9201,72498 9258,72432 9292,72394 9312,72371|8417,72881 8432,72884 8445,72887 8531,72912|9865,68723 9859,68667 9856,68640 9855,68618 9854,68599 9853,68580 9852,68561 9852,68542 9852,68518 9852,68492 9852,68471 9853,68450 9855,68431 9856,68413 9857,68398 9859,68384 9862,68355 9865,68337 9867,68319 9870,68301 9873,68284 9880,68251 9884,68234 9888,68219 9892,68202 9896,68188 9900,68172 9905,68157 9910,68140 9915,68124 9926,68093 9938,68061 9949,68031 9989,67927 10030,67821 10060,67744 10083,67683|8261,72869 8259,72871 8256,72874 8254,72877 8252,72881 8251,72886 8250,72890 8250,72895 8250,72900 8251,72904 8252,72909 8254,72912 8256,72916 8259,72918 8262,72920 8265,72921 8268,72921 8271,72920 8274,72919 8276,72917 8279,72914 8281,72910 8282,72906 8283,72901 8284,72897 8284,72892 8283,72887 8282,72883 8280,72878 8278,72875 8276,72872 8273,72870 8270,72869 8267,72868 8264,72868 8261,72869|8313,72881 8326,72879 8339,72878 8353,72877 8366,72877 8378,72877 8388,72878 8403,72879 8417,72881|9815,70094 9814,70116|9883,68973 9883,68990 9883,69009 9882,69032 9882,69055 9881,69075 9879,69101 9877,69144 9874,69195 9867,69304 9862,69381 9857,69459 9852,69539 9849,69584 9846,69623 9842,69677|9814,70116 9807,70233 9803,70290 9795,70423 9786,70555 9782,70620 9778,70683 9772,70748 9766,70814 9759,70891 9754,70930 9752,70949 9750,70968 9745,71008 9740,71046 9737,71070 9734,71094 9727,71143|9312,72371 9342,72337 9353,72324 9364,72311 9371,72301 9381,72288 9391,72275 9404,72257 9417,72238 9427,72221 9440,72202 9450,72184 9463,72162 9476,72139 9485,72122 9493,72107 9501,72089 9509,72074 9515,72059 9521,72046 9529,72029 9537,72010|9537,72010 9542,71996 9547,71986 9554,71965 9565,71938 9571,71920 9577,71900 9582,71884 9589,71862 9592,71851 9596,71838 9600,71825 9605,71805 9609,71789 9614,71770 9619,71748 9623,71729 9628,71705 9632,71687 9636,71667 9640,71646|10971,64887 10933,64916 10893,64948 10846,64985|10846,64985 10828,65001 10810,65017 10800,65026 10789,65037 10779,65047 10769,65058 10759,65068 10749,65080 10739,65092 10729,65104 10710,65128 10701,65141 10692,65154 10683,65167 10674,65180|9640,71646 9642,71636 9644,71622 9650,71588 9655,71561 9660,71531|10464,66353 10463,66245 10462,66148 10461,66039 10461,65983 10462,65956 10462,65929|10462,65929 10463,65906 10464,65883 10467,65837 10470,65801 10474,65767|10088,67671 10099,67642 10113,67607 10130,67563 10148,67515 10161,67482 10174,67449 10199,67382 10221,67325 10245,67264 10268,67202 10292,67141 10322,67063 10352,66984 10365,66953 10377,66920 10389,66889 10400,66855 10409,66827 10418,66798 10423,66778 10429,66756 10433,66736 10438,66715 10442,66695 10446,66674 10449,66653 10452,66632|10083,67683 10088,67671|9819,70040 9815,70094|9727,71143 9721,71178 9716,71214 9711,71241 9707,71268 9697,71322|9819,70040 9831,69858 9832,69849|9842,69677 9833,69834 9832,69849|8313,72881 8308,72879 8296,72880 8290,72880 8280,72878|8283,72901 8289,72894 8293,72891 8297,72889 8308,72886 8313,72881";
+const BACKDROP = "r1:1248,6370 1240,6377|r2:874,6843 876,6855 877,6866 880,6886 884,6915 886,6932 887,6938|r2:743,6884 774,6886 781,6885 788,6889|r2:809,6911 816,6908 823,6909 829,6912 835,6919 842,6924 849,6928 859,6931|r2:623,6708 629,6710 636,6714 641,6720 646,6740 650,6754 655,6764 668,6777 679,6788 687,6798 693,6808 697,6815 704,6829 710,6841 721,6855 737,6879 743,6884|r1:1045,6646 1040,6657 1028,6681 1010,6719 1005,6731 1000,6740 986,6771 982,6778 975,6792|r3:878,7118 878,7126|r3:975,6792 974,6771 972,6746 970,6721 970,6697 970,6683 969,6670 967,6657 963,6632 958,6609 955,6594|r1:972,6798 965,6792 958,6793 945,6794 921,6795 910,6795|r3:791,6518 773,6525|r3:891,6976 900,6974 902,6973|r3:889,6978 884,6988 881,7001 881,7015 879,7033 877,7049 878,7055|r3:878,7059 879,7068|r3:880,7073 881,7086 881,7091|r3:879,7068 880,7073|r3:772,6526 752,6541 743,6547|r3:773,6525 772,6526|r2:859,6931 864,6932|r2:864,6932 874,6935 883,6937|r1:1168,6941 1174,6941|r1:651,6235 665,6255 674,6269 686,6286 697,6303 709,6324 722,6348 738,6380 745,6395 751,6408 755,6417 758,6427 762,6436 766,6449 771,6463 779,6484 791,6518|r3:1492,7125 1484,7124 1473,7108 1466,7096 1454,7097 1434,7111 1424,7118 1405,7127 1397,7135 1392,7154 1384,7189 1379,7203 1371,7214 1361,7213 1350,7212 1339,7211 1330,7210 1318,7205 1302,7199 1285,7192 1275,7187 1256,7177 1245,7173 1238,7173|r3:1237,7170 1234,7158 1237,7142 1240,7123 1243,7093 1246,7069 1247,7054 1249,7040 1252,7026 1258,7009 1267,6995 1277,6984 1284,6969 1288,6958 1287,6942 1285,6929 1281,6920|r2:858,6831 858,6834|r2:858,6834 869,6840 874,6843|r1:1016,6988 1028,6986 1040,6983 1058,6979 1084,6973 1098,6970 1111,6964 1120,6960 1127,6955 1134,6952 1144,6948 1152,6945|r3:956,6832 955,6835|r3:955,6835 949,6847 943,6859 940,6866|r1:802,7300 795,7303 784,7309 767,7317|r3:748,6565 751,6576|r1:791,6518 812,6574 817,6587 829,6617|r3:821,6788 815,6822|r3:908,6942 903,6960 903,6971|r3:881,7091 879,7104 878,7118|r3:751,6576 743,6585 735,6593 731,6597|r3:938,6549 937,6531 936,6517 938,6504 938,6485 936,6471 933,6455|r3:955,6594 949,6578 939,6559 938,6549|r3:858,7257 855,7272|r1:1240,6377 1235,6382|r1:1232,6384 1226,6388 1203,6407 1170,6432 1161,6439 1135,6459 1117,6473 1107,6481 1104,6483|r3:1246,6315 1246,6319|r3:1118,5986 1115,5999 1112,6016 1111,6031 1114,6044 1119,6060 1121,6074 1125,6085 1126,6101 1129,6116 1141,6134 1152,6149 1163,6164 1180,6188 1192,6209|r3:1246,6319 1249,6332 1248,6345 1246,6361 1248,6370|res:1073,7185 1088,7183 1104,7196 1120,7187 1135,7183 1127,7162 1106,7169 1089,7170 1072,7182 1073,7185|res:778,7516 795,7517 810,7520 825,7530 817,7555 824,7585 831,7607 846,7612 832,7621 816,7616 800,7612 783,7602 768,7602 782,7592 776,7560 775,7535 778,7516|r3:1166,7168 1158,7172 1149,7177 1140,7180 1131,7182 1119,7182 1110,7182 1100,7181 1091,7182 1079,7184 1065,7184 1060,7184|r3:1238,7173 1226,7175 1217,7175 1207,7175 1196,7175 1186,7174 1176,7171 1167,7168 1166,7168|r1:910,6795 901,6795 895,6796 887,6797 871,6801 870,6802|r3:891,6967 890,6974|r3:933,6455 930,6431 930,6418 930,6405 926,6393 923,6377|r3:922,6304 922,6280 921,6276|r3:923,6377 920,6357 921,6327 921,6310 922,6304|r3:962,6821 956,6832|r3:927,6894 919,6911|r1:829,6617 836,6634 842,6657 846,6675 849,6692 851,6701 853,6708|r3:932,6884 927,6894|r3:940,6866 933,6881 932,6884|r3:972,6798 967,6810 963,6819|r1:853,6708 855,6719 858,6732 861,6748 864,6761 866,6773 868,6790 869,6802|r3:919,6911 913,6923 909,6937 908,6942|r1:975,6792 972,6798|r3:861,7236 858,7257|r3:887,6940 889,6955 890,6957|r3:872,7167 869,7182 867,7200 864,7215 863,7226|r3:1231,6277 1235,6290 1239,6300|r1:1054,6619 1052,6628 1045,6646|r1:1152,6945 1161,6943 1168,6941|r3:890,6957 890,6961|r3:751,6576 762,6600 783,6645 792,6664 803,6699 808,6719 811,6734 814,6746 819,6774 821,6785 821,6788|r1:767,7317 737,7331 727,7336 714,7342 705,7351|r3:814,6823 811,6837 810,6857 808,6871 807,6884 808,6905 809,6911|r3:815,6822 814,6823|r3:731,6597 730,6598 707,6620 702,6626|r1:1346,6155 1342,6178 1331,6205 1306,6260 1290,6294 1278,6322 1268,6341 1263,6350 1255,6362 1249,6369|r1:870,6802 869,6802|r3:1079,6640 1085,6628 1090,6615 1093,6594 1094,6580 1099,6570 1103,6556 1104,6539 1107,6526 1110,6509 1116,6500 1127,6494 1139,6489 1148,6487 1157,6488 1169,6486 1184,6477 1192,6472 1217,6472 1228,6469 1239,6465 1252,6460 1262,6455 1274,6448 1279,6438 1285,6426 1291,6422|w:899,7298 891,7301 884,7292 877,7300 877,7313 869,7311 866,7326 861,7336 852,7344 842,7348 837,7361 825,7380 823,7393 812,7396 807,7408 809,7423 809,7438 804,7449 796,7461 788,7475 788,7489 780,7492 767,7491 757,7494 756,7508 748,7514 742,7524 737,7514 725,7516 717,7518 707,7526 699,7524 692,7533 693,7546 686,7557 683,7569 675,7563 678,7577 666,7585 662,7569 654,7565 649,7579 655,7589 647,7593 641,7580 632,7580 630,7567 625,7549 618,7557 608,7554 609,7567 599,7574 591,7568 582,7571 588,7592 589,7605 581,7615 570,7613 564,7625 562,7638 561,7641|res:535,6147 542,6171 553,6189 561,6211 571,6232 584,6245 590,6267 595,6292 606,6317 608,6293 629,6306 617,6321 632,6312 647,6317 657,6337 667,6357 671,6380 658,6394 675,6393 679,6418 690,6439 701,6469 717,6476 713,6500 725,6518 731,6544 745,6558 750,6530 742,6508 734,6483 724,6460 710,6431 703,6410 691,6392 683,6359 677,6336 658,6309 647,6281 641,6255 631,6237 614,6252 599,6251 588,6224 587,6189 575,6173 575,6146 574,6121 563,6101 551,6080 536,6074 535,6114 535,6147|res:1221,6369 1233,6385 1250,6388 1265,6364 1251,6347 1252,6322 1235,6325 1232,6353 1221,6369|r1:1235,6382 1232,6384|r1:1104,6483 1097,6489|r1:1249,6369 1248,6370|r3:1192,6209 1205,6228 1219,6253 1225,6264 1230,6274 1231,6277|res:1313,7203 1330,7202 1329,7228 1310,7213 1313,7203|res:1247,7006 1250,7033 1265,7035 1254,7016 1247,7006|res:1184,6476 1199,6481 1209,6461 1195,6470 1184,6476|r3:1324,6388 1321,6403 1307,6416 1297,6417 1291,6422|res:1197,7421 1212,7422 1210,7447 1196,7433 1197,7421|r1:1253,6927 1263,6925 1270,6923 1280,6921 1281,6920|r3:1210,7450 1201,7440 1194,7430 1185,7417 1162,7381 1158,7366 1158,7336 1163,7227 1164,7203 1165,7172 1166,7168|r1:1174,6941 1185,6942 1192,6942 1214,6937 1250,6928 1253,6927|r1:1315,6912 1348,6904 1360,6903 1371,6905 1377,6907 1386,6912 1391,6916|r3:1281,6920 1280,6914|r1:1281,6920 1284,6920 1290,6918 1297,6916 1315,6912|r3:1280,6914 1275,6891 1272,6875 1271,6868|r3:1271,6868 1261,6867 1250,6868 1241,6866 1227,6855 1214,6845 1203,6834 1196,6819 1183,6794 1177,6780 1165,6749 1161,6738 1157,6727 1148,6704 1133,6687 1125,6680 1114,6671 1097,6658 1089,6650 1081,6641 1079,6640|r3:641,6897 652,6894 662,6898 671,6900 680,6896 689,6891 704,6885 714,6885 743,6884|w:1392,6167 1384,6175 1375,6173 1372,6189 1372,6202 1368,6216 1363,6227 1357,6238 1352,6248 1348,6263 1347,6280 1338,6303 1331,6312 1328,6334 1322,6353 1319,6368 1316,6380 1313,6392 1308,6402 1298,6405 1289,6413 1284,6424 1275,6428 1267,6434 1259,6429 1252,6436 1247,6448 1231,6440 1221,6444 1212,6451 1203,6455 1192,6461 1180,6466 1170,6464 1161,6462 1151,6468 1143,6473 1135,6480 1127,6483 1116,6491 1107,6507 1105,6522 1101,6534 1101,6552 1095,6573 1090,6583 1090,6587|w:1030,6767 1024,6781 1019,6794 1007,6819 1002,6830 998,6848 993,6860 969,6952 967,6986 967,6999 965,7012 960,7034 960,7052 968,7078 971,7094 965,7133 962,7147 961,7165|r2:869,6802 871,6812 868,6821 861,6826 858,6831|r1:1047,6577 1049,6568 1051,6558 1054,6546 1057,6537 1061,6529 1066,6521 1067,6518|r1:1045,6663 1046,6652 1046,6635|r1:988,6897 988,6887 987,6875 986,6872|r1:966,7153 968,7142 970,7132|r1:853,7291 859,7293 867,7293 875,7292 882,7289 889,7284 898,7275 905,7267 911,7260 920,7250 926,7243 931,7237|r1:842,7288 853,7291|r3:855,7272 850,7283 841,7294 832,7298 829,7294|r1:986,6872 985,6862 985,6852 986,6841 987,6830 989,6820 993,6809 999,6793 1003,6782 1008,6768|r1:831,7288 839,7288 842,7288|r3:646,6306 656,6316 663,6326 668,6339 673,6355 678,6376 683,6396 687,6409 692,6420 699,6436 707,6448 722,6476 726,6487 731,6506 739,6531 743,6547 748,6565|r1:1054,6619 1055,6608 1054,6598 1051,6594|res:1200,6245 1227,6284 1236,6308 1237,6277 1224,6256 1204,6228 1200,6245|res:956,6808 955,6832 935,6830 919,6823 917,6797 934,6796 956,6808|res:966,7080 969,7103 964,7126 944,7119 958,7095 966,7080|r1:983,6985 990,6985 997,6985 1009,6985 1015,6988 1016,6988|r1:982,7009 981,7012|r1:988,6897 988,6908 987,6919 987,6930 986,6946 985,6958 984,6968|r1:981,7012 981,7023 979,7042 979,7056 978,7068 977,7081 975,7093 974,7105 973,7114|r1:931,7237 937,7230 942,7224 946,7216 950,7209 954,7201|r1:954,7201 957,7192 961,7180 963,7171 964,7165|r1:1097,6489 1089,6495 1085,6499|r1:1085,6499 1079,6504 1073,6510 1068,6517 1067,6518|r1:964,7165 966,7156 966,7153|r1:1046,6635 1046,6624 1046,6604 1046,6593|r1:1046,6593 1047,6580 1047,6577|r1:1009,6767 1013,6756 1017,6745 1022,6733 1027,6720 1032,6706 1036,6695 1040,6686 1043,6676 1045,6667 1045,6663|r1:1008,6768 1009,6767|r1:982,7004 982,7009|r1:973,7114 971,7124 970,7132|r1:982,7004 983,6986 983,6985|r1:984,6968 983,6983 983,6985|r3:863,7226 861,7236|r3:878,7126 875,7143 873,7156 872,7167|r1:822,7291 812,7296 802,7300|res:929,7149 947,7158 947,7189 944,7216 932,7233 919,7170 929,7149|res:817,6878 811,6852 827,6841 846,6835 845,6870 856,6896 868,6917 856,6940 851,6967 834,6960 817,6938 817,6911 822,6879 817,6878|res:803,6701 810,6731 826,6738 813,6722 808,6695 823,6696 824,6665 820,6640 806,6630 789,6635 777,6620 765,6588 753,6607 745,6630 763,6607 771,6630 785,6651 793,6671 789,6694 803,6701|res:865,6775 868,6800 883,6807 904,6810 914,6792 903,6766 893,6739 884,6713 865,6722 864,6696 847,6681 839,6659 828,6639 831,6613 830,6589 815,6595 809,6617 820,6635 825,6664 834,6697 845,6724 851,6751 865,6773 865,6775|res:973,6919 980,6895 983,6872 978,6849 965,6836 949,6847 933,6849 915,6860 896,6839 879,6838 876,6865 847,6875 856,6895 881,6900 885,6931 869,6932 855,6943 852,6966 866,6983 877,7003 878,7032 874,7056 885,7076 903,7080 917,7089 917,7113 928,7136 941,7123 947,7101 952,7053 955,7022 957,6986 964,6952 972,6923 973,6919|res:760,7266 773,7278 779,7310 804,7301 805,7276 820,7266 835,7271 851,7274 861,7242 876,7242 892,7214 903,7193 925,7153 924,7128 913,7111 898,7103 887,7085 876,7068 875,7041 879,7017 870,6998 858,6981 842,6962 827,6957 817,6938 817,6911 822,6879 811,6852 795,6854 798,6877 802,6902 793,6931 808,6944 817,6975 829,7020 839,7046 826,7063 840,7076 849,7096 844,7119 829,7111 814,7109 800,7124 824,7142 830,7166 824,7188 832,7208 847,7204 846,7176 850,7200 852,7225 843,7246 828,7252 814,7261 799,7269 781,7263 768,7250 760,7266|res:1003,6731 988,6737 982,6713 980,6688 969,6667 968,6641 962,6618 958,6595 957,6625 955,6663 964,6682 959,6718 953,6748 954,6772 937,6775 945,6795 956,6813 966,6831 980,6820 989,6801 997,6780 1007,6754 1015,6734 1043,6662 1031,6677 1018,6705 1004,6732 1003,6731|res:1246,6437 1256,6418 1249,6391 1240,6410 1228,6425 1213,6437 1198,6447 1183,6457 1198,6452 1214,6449 1228,6434 1244,6429 1246,6437|w:1090,6587 1088,6613 1084,6626 1073,6643 1067,6658 1064,6678 1060,6690 1054,6700 1051,6713 1047,6725 1041,6747 1034,6759 1030,6767|r3:891,6967 890,6961|r3:1239,6300 1245,6311 1246,6315|r2:788,6889 806,6909 809,6911|r2:884,6937 887,6938|res:727,7341 710,7349 703,7374 729,7362 727,7341|w:793,6636 802,6635 810,6626 819,6635 823,6656 828,6682 833,6697 837,6710 844,6725 849,6743 851,6765 849,6782 854,6801 852,6821 848,6832 845,6858 847,6876 851,6889 864,6901 869,6912 865,6925 857,6938 853,6949 852,6966 858,6979 867,6984 871,6996 878,7006 877,7035 874,7049 874,7063 883,7074 891,7091 902,7105 912,7109 924,7127 930,7143 938,7153 949,7153 958,7160 961,7165|res:947,6459 962,6460 959,6432 945,6423 940,6398 931,6376 924,6350 928,6300 928,6276 915,6297 916,6323 912,6348 913,6372 918,6395 922,6428 927,6458 928,6484 927,6509 935,6545 939,6521 954,6519 958,6495 952,6472 947,6459|res:798,7208 782,7207 767,7198 756,7214 753,7190 765,7173 780,7167 798,7171 803,7200 798,7208|res:1045,6981 1021,6986 1000,6990 988,7005 1009,7008 1028,6999 1048,6995 1045,6981|res:1013,7141 1020,7162 1013,7183 998,7183 982,7183 970,7168 974,7143 989,7138 1004,7146 1013,7141|res:1038,6698 1043,6723 1052,6704 1061,6684 1065,6660 1055,6630 1050,6653 1047,6677 1038,6698|r3:887,6938 887,6940|r3:963,6819 962,6821|w:961,7165 964,7194 966,7207 965,7221 960,7231 957,7245 948,7259 941,7268 933,7272 922,7271 912,7274 904,7284 900,7297 899,7298|res:1045,7134 1054,7158 1046,7180 1043,7157 1045,7134|r2:883,6937 884,6937|r2:886,6932 883,6937|res:1016,6704 1002,6713 989,6727 1005,6724 1016,6704|res:943,7121 963,7130 947,7148 932,7143 943,7121";
+
+// ====== Pomocné ======
+const SEV = [
+  {label:'Bez zranění',  short:'bez zranění', c:'#7b8494', r:5},
+  {label:'Lehké zranění',short:'lehké zranění', c:'#e0a100', r:6.5},
+  {label:'Těžké zranění',short:'těžké zranění', c:'#e8590c', r:8.5},
+  {label:'Smrtelná',     short:'smrtelná', c:'#9d0208', r:9.5}
+];
+const D = RAW.dict;
+const rows = RAW.rows.map(r => Object.fromEntries(RAW.cols.map((c,i)=>[c,r[i]])));
+rows.forEach(r => { r.sev = r.usmrceno ? 3 : r.tezce ? 2 : r.lehce ? 1 : 0; r.year = +r.datum.slice(0,4); });
+const fmt = n => n.toLocaleString('cs-CZ');
+const PRICINA_SHORT = {
+  'nezvládnutí řízení vozidla':'Nezvládnutí řízení',
+  'proti příkazu dopravní značky DEJ PŘEDNOST':'Nedání přednosti (Dej přednost)',
+  'proti příkazu dopravní značky STŮJ DEJ PŘEDNOST':'Nedání přednosti (Stop)',
+  'nezaviněná řidičem':'Nezaviněno řidičem',
+  'řidič se plně nevěnoval řízení vozidla':'Nepozornost řidiče',
+  'nedodržení bezpečné vzdálenosti za vozidlem':'Malý odstup za vozidlem',
+  'při odbočování vlevo':'Chyba při odbočování vlevo',
+  'nepřizpůsobení rychlosti stavu vozovky (náledí, výtluky, bláto, mokrý povrch apod.)':'Rychlost nepřizpůsobená vozovce',
+  'nepřizpůsobení rychlosti vlastnostem vozidla a nákladu':'Rychlost nepřizpůsobená vozidlu',
+  'jiný druh nepřiměřené rychlosti':'Nepřiměřená rychlost',
+  'jízda po nesprávné straně vozovky, vjetí do protisměru':'Vjetí do protisměru',
+  'při předjíždění došlo k ohrožení předjížděného řidiče vozidla (vynucené zařazení, předjížděný řidič musel prudce brzdit, měnit směr jízdy apod.)':'Chyba při předjíždění',
+  'při předjíždění došlo k ohrožení protijedoucího řidiče vozidla (špatný odhad vzdálenosti potřebné k předjetí apod.)':'Chyba při předjíždění',
+  'předjíždění vlevo vozidla odbočujícího vlevo':'Chyba při předjíždění',
+  'chyby při udání směru jízdy':'Chyba při udání směru',
+  'jiný druh nesprávného způsobu jízdy':'Jiná chyba při jízdě'
+};
+const pricina = r => PRICINA_SHORT[D.pricina[r.pricina]] || D.pricina[r.pricina];
+const DRUH_SHORT = {
+  'srážka s jedoucím nekolejovým vozidlem':'Srážka vozidel',
+  'srážka s lesní zvěří':'Srážka se zvěří či zvířetem',
+  'srážka s domácím zvířetem':'Srážka se zvěří či zvířetem',
+  'srážka s pevnou překážkou':'Náraz do překážky',
+  'srážka s vozidlem zaparkovaným, odstaveným':'Náraz do stojícího vozidla',
+  'havárie':'Jiné','jiný druh nehody':'Jiné'
+};
+const druh = r => DRUH_SHORT[D.druh[r.druh]] || D.druh[r.druh];
+const vozidla = s => s.replace(/osobní automobil bez přívěsu/g,'osobní auto').replace(/osobní automobil s přívěsem/g,'osobní auto s přívěsem')
+  .replace(/nákladní automobil s návěsem/g,'kamion').replace(/nákladní automobil s přívěsem/g,'nákladní auto s přívěsem')
+  .replace(/nákladní automobil/g,'nákladní auto').replace(/jiné nemotorové vozidlo/g,'jízdní kolo či jiné nemotorové vozidlo')
+  .replace(/nezjištěno, řidič ujel/g,'neznámé vozidlo (řidič ujel)');
+function when(r){
+  const [d,t] = r.datum.split(' '); const [y,m,dd] = d.split('-').map(Number);
+  const [h,mi] = t.split(':');
+  const days=['neděle','pondělí','úterý','středa','čtvrtek','pátek','sobota'];
+  const wd = days[new Date(y,m-1,dd).getDay()];
+  return `${dd}. ${m}. ${y} (${wd}), ` + (mi.includes('?') ? `kolem ${+h} h` : `${+h}:${mi}`);
+}
+function nasledky(r){
+  const p=[];
+  if(r.usmrceno) p.push(r.usmrceno===1?'1 člověk zemřel':`${r.usmrceno} lidé zemřeli`);
+  if(r.tezce) p.push(`${r.tezce} těžce zraněn${r.tezce===1?'ý':'í'}`);
+  if(r.lehce) p.push(`${r.lehce} lehce zraněn${r.lehce===1?'ý':'í'}`);
+  return p.length ? p.join(', ') : 'bez zranění';
+}
+function okolnosti(r){
+  const p=[];
+  p.push(r.noc ? 'v noci' : 've dne');
+  if(r.mokro) p.push('mokrá nebo kluzká vozovka');
+  if(r.krizovatka) p.push('v křižovatce');
+  if(r.alkohol) p.push('viník pod vlivem alkoholu');
+  const z = D.zver[r.zver]; if(z && z!=='nejde o srážku se zvěří/zvířetem') p.push('zvíře: ' + z);
+  return p.join(', ');
+}
+function popupHtml(r){
+  const s = SEV[r.sev];
+  return `<div class="pp"><span class="sev" style="--c:${s.c}">${s.label === 'Smrtelná' ? 'Smrtelná nehoda' : 'Nehoda – ' + s.short}</span>
+  <div class="when">${when(r)}</div>
+  <dl><dt>Druh</dt><dd>${druh(r)}</dd>
+  <dt>Příčina</dt><dd>${pricina(r)}</dd>
+  <dt>Následky</dt><dd>${nasledky(r)}</dd>
+  <dt>Vozidla</dt><dd>${vozidla(r.vozidla)}</dd>
+  <dt>Okolnosti</dt><dd>${okolnosti(r)}</dd>
+  <dt>Škoda</dt><dd>${fmt(r.skoda)} Kč</dd></dl>
+  <a href="https://nehody.cdv.cz/detail.php?p1=${r.id}">Plný záznam na nehody.cdv.cz</a></div>`;
+}
+const dec = (s, f) => s.split('|').map(part => part.split(' ').map(p => { const [a,b]=p.split(','); return [50 + a/f, 17 + b/f]; }));
+
+// ====== Úvodní čísla ======
+document.querySelectorAll('.asof').forEach(e => e.textContent = DATA_ASOF);
+const tot = { n: rows.length, dead: rows.reduce((a,r)=>a+r.usmrceno,0), heavy: rows.reduce((a,r)=>a+r.tezce,0), light: rows.reduce((a,r)=>a+r.lehce,0) };
+document.getElementById('kpis').innerHTML = `
+  <div class="kpi"><div class="v">${tot.n}</div><div class="l">nehod od otevření v září 2021</div></div>
+  <div class="kpi death"><div class="v">${tot.dead}</div><div class="l">${tot.dead===1?'člověk zemřel':'lidé zemřeli'}</div></div>
+  <div class="kpi"><div class="v">${tot.heavy + tot.light}</div><div class="l">zraněných (${tot.heavy} těžce)</div></div>
+  <div class="kpi"><div class="v">7,7 km</div><div class="l">délka obchvatu</div></div>`;
+
+const HOT = [
+  { name:'Křižovatka s Petrovickou (I/45)', lat:50.09832, lng:17.69850, dir:'right' },
+  { name:'Křižovatka nad Chomýží', lat:50.10462, lng:17.65930, dir:'left' }
+];
+const dist = (a,b) => Math.hypot((a.lat-b.lat)*111320, (a.lng-b.lng)*111320*Math.cos(50.1*Math.PI/180));
+HOT.forEach(h => { h.rows = rows.filter(r => dist(r,h) < 80); });
+const years = [...new Set(rows.map(r=>r.year))].sort();
+let map = null;
+setTimeout(initCharts, 0);
+
+// ====== Mapa ======
+function initMap(){
+try {
+map = L.map('map', { scrollWheelZoom:false, zoomSnap:0.5, minZoom:12, maxZoom:18 });
+map.createPane('backdrop'); map.getPane('backdrop').style.zIndex = 150;
+const bdRenderer = L.canvas({ pane:'backdrop' });
+const BD_STYLE = {
+  res:{ stroke:false, fill:true, fillColor:'#e2e0d8', fillOpacity:1 },
+  w:  { color:'#9cc3e6', weight:3 },
+  r1: { color:'#ffffff', weight:4 }, r2:{ color:'#ffffff', weight:3 }, r3:{ color:'#ffffff', weight:2 }
+};
+BACKDROP.split('|').forEach(f => {
+  const i = f.indexOf(':'); const cls = f.slice(0,i);
+  const pts = f.slice(i+1).split(' ').map(p => { const [a,b]=p.split(','); return [50+a/1e4, 17+b/1e4]; });
+  const st = Object.assign({ renderer:bdRenderer, interactive:false }, BD_STYLE[cls]);
+  (cls==='res' ? L.polygon(pts, st) : L.polyline(pts, st)).addTo(map);
+});
+if (MAPY_API_KEY) {
+  L.tileLayer(`https://api.mapy.com/v1/maptiles/basic/256/{z}/{x}/{y}?apikey=${MAPY_API_KEY}`, {
+    minZoom:0, maxZoom:19,
+    attribution:'<a href="https://api.mapy.com/copyright" target="_blank">&copy; Seznam.cz a.s. a další</a>'
+  }).addTo(map);
+  const Logo = L.Control.extend({ options:{ position:'bottomleft' }, onAdd(){
+    const a = L.DomUtil.create('a'); a.href='https://mapy.com/'; a.target='_blank';
+    a.innerHTML = '<img src="https://api.mapy.com/img/api/logo.svg" alt="Mapy.com" style="display:block">'; return a; } });
+  new Logo().addTo(map);
+} else {
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom:19,
+    attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">přispěvatelé OpenStreetMap</a>' }).addTo(map);
+}
+const route = dec(BYPASS, 1e5);
+L.polyline(route, { color:'#ffffff', weight:9, opacity:.9, interactive:false }).addTo(map);
+L.polyline(route, { color:'#24407a', weight:5, interactive:false }).addTo(map);
+const bounds = L.latLngBounds(route.flat());
+map.fitBounds(bounds, { padding:[20,20] });
+
+// Nejrizikovější místa
+HOT.forEach(h => {
+  L.circle([h.lat,h.lng], { radius:70, color:'#1d2433', weight:1.5, dashArray:'4 4', fill:false, interactive:false }).addTo(map)
+   .bindTooltip(`<span class="hotlabel">${h.name}</span>: ${h.rows.length} nehod`, { permanent:true, direction:h.dir, offset:[h.dir==='right'?24:-24,0] });
+});
+
+// Body nehod – rozprostření překrývajících se bodů
+const markers = rows.slice().sort((a,b)=>a.sev-b.sev).map(r => {
+  const s = SEV[r.sev];
+  const m = L.circleMarker([r.lat,r.lng], { radius:s.r, color:'#fff', weight:1.5, fillColor:s.c, fillOpacity:.95 });
+  m.bindPopup(popupHtml(r), { maxWidth:300 });
+  m.row = r; return m;
+});
+const layer = L.layerGroup(markers).addTo(map);
+function spread(){
+  const z = map.getZoom(); const groups = {};
+  markers.forEach(m => { if(!layer.hasLayer(m)) return;
+    const k = m.row.lat.toFixed(4)+','+m.row.lng.toFixed(4); (groups[k] = groups[k] || []).push(m); });
+  Object.values(groups).forEach(g => {
+    if (g.length === 1) { g[0].setLatLng([g[0].row.lat, g[0].row.lng]); return; }
+    const c = map.project([g[0].row.lat, g[0].row.lng], z);
+    g.forEach((m,i) => { const a = i*2.4, d = 6*Math.sqrt(i+0.5);
+      m.setLatLng(map.unproject(L.point(c.x + d*Math.cos(a), c.y + d*Math.sin(a)), z)); });
+  });
+}
+map.on('zoomend', spread);
+
+// Filtry
+const state = { sev:new Set([0,1,2,3]), year:'' };
+const ysel = document.getElementById('year');
+years.forEach(y => ysel.insertAdjacentHTML('beforeend', `<option value="${y}">${y}</option>`));
+const fbox = document.getElementById('filters');
+[3,2,1,0].forEach(i => {
+  const b = document.createElement('button'); b.className='chip'; b.type='button';
+  b.setAttribute('aria-pressed','true'); b.style.setProperty('--c', SEV[i].c);
+  b.innerHTML = `<span class="dot"></span>${SEV[i].label} <span class="n" data-sev="${i}"></span>`;
+  b.onclick = () => { state.sev.has(i) ? state.sev.delete(i) : state.sev.add(i); b.setAttribute('aria-pressed', state.sev.has(i)); apply(); };
+  fbox.insertBefore(b, ysel);
+});
+ysel.onchange = () => { state.year = ysel.value; apply(); };
+function apply(){
+  let shown = 0;
+  markers.forEach(m => { const r = m.row;
+    const ok = state.sev.has(r.sev) && (!state.year || r.year == state.year);
+    if (ok) { shown++; layer.addLayer(m); } else layer.removeLayer(m); });
+  // čísla u filtrů podle zvoleného roku
+  document.querySelectorAll('.chip .n').forEach(e => {
+    const s = +e.dataset.sev; e.textContent = rows.filter(r => r.sev===s && (!state.year || r.year==state.year)).length; });
+  document.getElementById('count').textContent = `Zobrazeno ${shown} z ${rows.length} nehod`;
+  spread();
+}
+apply();
+} catch (e) {
+  console.error(e);
+  document.getElementById('map').innerHTML = '<p style="padding:20px">Mapu se nepodařilo načíst. Zkuste stránku obnovit.</p>';
+}
+}
+
+// ====== Grafy ======
+function initCharts(){
+document.getElementById('sevlegend').innerHTML = SEV.map(s=>`<span style="--c:${s.c}">${s.label}</span>`).join('');
+(function(){
+  const el = document.getElementById('chart-years');
+  const max = Math.max(...years.map(y => rows.filter(r=>r.year===y).length));
+  el.innerHTML = years.map(y => {
+    const ys = rows.filter(r=>r.year===y);
+    const segs = [3,2,1,0].map(i => { const n = ys.filter(r=>r.sev===i).length;
+      return n ? `<div class="seg" style="width:${n/max*100}%;background:${SEV[i].c}" title="${SEV[i].label}: ${n}"></div>` : ''; }).join('');
+    return `<div class="lab">${y}</div><div class="track">${segs}</div><div class="val">${ys.length}</div>`;
+  }).join('');
+})();
+function barChart(id, entries, color){
+  const max = Math.max(...entries.map(e=>e[1]));
+  document.getElementById(id).innerHTML = entries.map(([k,n]) =>
+    `<div class="lab">${k}</div><div class="track"><div class="seg" style="width:${n/max*100}%;background:${color}"></div></div><div class="val">${n}</div>`).join('');
+}
+const countBy = f => Object.entries(rows.reduce((a,r)=>{ const k=f(r); a[k]=(a[k]||0)+1; return a; }, {})).sort((a,b)=>b[1]-a[1]);
+barChart('chart-type', countBy(druh), '#24407a');
+barChart('chart-cause', countBy(pricina).slice(0,7), '#24407a');
+barChart('chart-cond', [
+  ['Ve dne', rows.filter(r=>!r.noc).length], ['V noci', rows.filter(r=>r.noc).length],
+  ['Mokrá či kluzká vozovka', rows.filter(r=>r.mokro).length], ['V křižovatce', rows.filter(r=>r.krizovatka).length],
+  ['Viník pod vlivem alkoholu', rows.filter(r=>r.alkohol).length]
+], '#5b6474');
+
+// Nejrizikovější místa – seznam
+document.getElementById('hotlist').innerHTML = HOT.map((h,i) => {
+  const dead = h.rows.reduce((a,r)=>a+r.usmrceno,0), heavy = h.rows.reduce((a,r)=>a+r.tezce,0), light = h.rows.reduce((a,r)=>a+r.lehce,0);
+  return `<li><div><b>${h.name}</b><small>${h.rows.length} nehod · ${dead} mrtvý${dead===1?'':'ch'}, ${heavy} těžce a ${light} lehce zraněných</small></div>
+  <button class="link" type="button" data-hot="${i}">Ukázat na mapě</button></li>`;
+}).join('');
+document.querySelectorAll('[data-hot]').forEach(b => b.onclick = () => {
+  pendingView = HOT[+b.dataset.hot]; location.hash = 'mapa';
+});
+}
+
+// ====== Přepínání stránek ======
+let pendingView = null;
+const VIEWS = ['uvod','mapa','statistika','data'];
+function route(){
+  const v = VIEWS.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'uvod';
+  VIEWS.forEach(x => document.getElementById('v-'+x).hidden = (x !== v));
+  document.querySelectorAll('nav a').forEach(a => a.classList.toggle('active', a.dataset.view === v));
+  window.scrollTo(0,0);
+  if (v === 'mapa') {
+    if (!map) initMap(); else map.invalidateSize();
+    if (map && pendingView) { map.setView([pendingView.lat, pendingView.lng], 17); pendingView = null; }
+  }
+}
+window.addEventListener('hashchange', route);
+route();
+
+// ====== Letecké snímky v pozadí úvodu (Mapy.com) ======
+const HERO_SPOTS = [
+  { lat:50.09832, lng:17.69850, z:17, name:'Křižovatka s Petrovickou (I/45)' },
+  { lat:50.10462, lng:17.65930, z:17, name:'Křižovatka nad Chomýží' },
+  { lat:50.08270, lng:17.72895, z:17, name:'Kruhový objezd na Opavské' },
+  { lat:50.09400, lng:17.72230, z:16, name:'Východní oblouk obchvatu' },
+  { lat:50.11500, lng:17.64450, z:16, name:'Severní část u Krásných Louček' }
+];
+function initHero(){
+  if (!MAPY_API_KEY || !window.L) return;
+  try {
+    const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const hm = L.map('heroMap', { zoomControl:false, attributionControl:false, dragging:false, scrollWheelZoom:false,
+      doubleClickZoom:false, boxZoom:false, keyboard:false, touchZoom:false, zoomSnap:0.5 });
+    L.tileLayer(`https://api.mapy.com/v1/maptiles/aerial/256/{z}/{x}/{y}?apikey=${MAPY_API_KEY}`, { maxZoom:19 }).addTo(hm);
+    L.polyline(dec(BYPASS, 1e5), { color:'#ffd166', weight:4, opacity:.85, interactive:false }).addTo(hm);
+    const cap = document.getElementById('heroCap');
+    let i = 0;
+    const show = (first) => {
+      const s = HERO_SPOTS[i % HERO_SPOTS.length];
+      // posun středu doprava, aby místo nebylo schované pod textem
+      const offset = window.innerWidth > 760 ? 0.25 : 0;
+      // cíl posunutý tak, aby místo leželo v pravé části snímku
+      const p = hm.project([s.lat, s.lng], s.z).subtract([hm.getSize().x*offset, 0]);
+      const target = hm.unproject(p, s.z);
+      if (first || reduce) hm.setView(target, s.z, { animate:false });
+      else hm.flyTo(target, s.z, { duration:3 });
+      cap.innerHTML = `${s.name} · letecký snímek <a href="https://api.mapy.com/copyright">&copy; Seznam.cz a.s. a další</a>`
+        + `<a href="https://mapy.com/"><img src="https://api.mapy.com/img/api/logo.svg" alt="Mapy.com"></a>`;
+      i++;
+    };
+    show(true);
+    setInterval(() => { if (!document.getElementById('v-uvod').hidden && !document.hidden) show(false); }, 30000);
+  } catch (e) { console.error(e); }
+}
+initHero();
+</script>
+</body>
+</html>
