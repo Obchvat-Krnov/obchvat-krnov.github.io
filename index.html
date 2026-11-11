@@ -172,6 +172,9 @@ nav a.active{background:#fff;color:#1d2433;font-weight:600}
 .heroCap img{height:18px;vertical-align:middle;margin-left:6px}
 .hero{padding:56px 0 80px}
 </style>
+<!-- Počítadlo návštěv GoatCounter (bez cookies) -->
+<script>window.goatcounter = { path: function(p){ return location.pathname + (location.hash || '#uvod'); } };</script>
+<script data-goatcounter="https://obchvat-krnov.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </head>
 <body>
 
@@ -603,7 +606,10 @@ function route(){
     requestAnimationFrame(() => setTimeout(fix, 30));
   }
 }
-window.addEventListener('hashchange', route);
+window.addEventListener('hashchange', () => {
+  route();
+  try { if (window.goatcounter && window.goatcounter.count) window.goatcounter.count({ path: location.pathname + (location.hash || '#uvod') }); } catch(e) {}
+});
 route();
 
 // ====== Letecké snímky v pozadí úvodu (Mapy.com) ======
