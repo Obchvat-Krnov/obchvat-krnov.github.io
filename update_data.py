@@ -14,7 +14,8 @@ import sys
 import time
 import urllib.parse
 import urllib.request
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
+from email.utils import parsedate_to_datetime
 
 BASE = "https://nehody.cdv.cz"
 AREA_CODE = "597520"            # Krnov - obec
@@ -138,6 +139,62 @@ def to_row(p1, lat, lng, f, vehicles, dicts):
     ]
 
 
+# ---------- Zprávy v médiích (Google News RSS) ----------
+NEWS_PLACE = re.compile(r"krnov|obchvat", re.I)
+NEWS_ACC = re.compile(r"nehod|srážk|střet|havár|zemřel|nepřežil|motork|naboural|srazil|tragéd|tragick|vrtulník|zraněn", re.I)
+NEWS_RECHECK_DAYS = 21   # u čerstvých nehod hledat znovu (články vycházejí se zpožděním)
+
+
+def news_for(day):
+    """Články o nehodě v Krnově vydané v den nehody nebo do 2 dnů po ní."""
+    d0 = datetime.strptime(day, "%Y-%m-%d").date()
+    after = (d0 - timedelta(days=1)).isoformat()
+    before = (d0 + timedelta(days=4)).isoformat()
+    last = (d0 + timedelta(days=2)).isoformat()
+    q = f"Krnov (nehoda OR havárie OR srážka OR nehodě OR motorkář OR řidič) after:{after} before:{before}"
+    url = "https://news.google.com/rss/search?" + urllib.parse.urlencode({"q": q, "hl": "cs", "gl": "CZ", "ceid": "CZ:cs"})
+    xml = http(url)
+    out = []
+    for item in re.findall(r"<item>(.*?)</item>", xml, re.S):
+        def g(tag):
+            m = re.search(rf"<{tag}[^>]*>(.*?)</{tag}>", item, re.S)
+            return html.unescape(m.group(1).strip()) if m else ""
+        full, src, link = g("title"), g("source"), g("link")
+        title = full[: -(len(src) + 3)] if src and full.endswith(" - " + src) else full
+        try:
+            pub = parsedate_to_datetime(g("pubDate")).date().isoformat()
+        except Exception:  # noqa: BLE001
+            continue
+        if day <= pub <= last and NEWS_PLACE.search(title) and NEWS_ACC.search(title):
+            out.append({"t": title, "s": src, "u": link, "d": pub})
+    return out[:6]
+
+
+def update_news(rows, old):
+    articles = dict(old.get("articles", {}))
+    checked = dict(old.get("news_checked", {}))
+    today = datetime.now(timezone.utc).date()
+    for r in rows:
+        rid, day = str(r[0]), r[4][:10]
+        injured = r[7] + r[8] + r[9] > 0
+        if not injured:
+            continue
+        age = (today - datetime.strptime(day, "%Y-%m-%d").date()).days
+        if rid in checked and age > NEWS_RECHECK_DAYS:
+            continue
+        try:
+            found = news_for(day)
+        except Exception as e:  # noqa: BLE001
+            print(f"  zprávy k {rid} se nepodařilo načíst: {e}")
+            continue
+        if found:
+            articles[rid] = found
+        checked[rid] = today.isoformat()
+        time.sleep(1)
+    ids = {str(r[0]) for r in rows}
+    return ({k: v for k, v in articles.items() if k in ids}, {k: v for k, v in checked.items() if k in ids})
+
+
 def main():
     with open("bypass.json", encoding="utf-8") as fh:
         route = json.load(fh)
@@ -170,13 +227,17 @@ def main():
         rows.append(to_row(p1, lat, lng, f, vehicles, dicts)); new += 1
 
     rows.sort(key=lambda r: r[4])
+    articles, checked = update_news(rows, old)
+    print(f"Nehod s nalezenými články: {len(articles)}")
     out = {
         "asof": asof, "asof_iso": asof_iso,
         "generated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "source": "Policie ČR / CDV, nehody.cdv.cz",
         "dict": dicts, "cols": COLS, "rows": rows, "excluded": sorted(excluded),
+        "articles": articles, "news_checked": checked,
     }
-    if old and old.get("asof_iso") == asof_iso and new == 0 and len(rows) == len(old.get("rows", [])):
+    same = lambda d: {k: v for k, v in d.items() if k not in ("generated", "news_checked")}
+    if old and same(old) == same(out):
         print("Žádná nová data, beze změny.")
         return
     with open("data.json", "w", encoding="utf-8") as fh:
