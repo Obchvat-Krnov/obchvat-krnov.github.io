@@ -484,6 +484,7 @@ const route = dec(BYPASS, 1e5);
 L.polyline(route, { color:'#ffffff', weight:9, opacity:.9, interactive:false }).addTo(map);
 L.polyline(route, { color:'#24407a', weight:5, interactive:false }).addTo(map);
 const bounds = L.latLngBounds(route.flat());
+window.MAP_BOUNDS = bounds;
 map.fitBounds(bounds, { padding:[20,20] });
 
 // Nejrizikovější místa
@@ -591,8 +592,15 @@ function route(){
   document.querySelectorAll('nav a').forEach(a => a.classList.toggle('active', a.dataset.view === v));
   window.scrollTo(0,0);
   if (v === 'mapa') {
-    if (!map) initMap(); else map.invalidateSize();
-    if (map && pendingView) { map.setView([pendingView.lat, pendingView.lng], 17); pendingView = null; }
+    const first = !map;
+    if (first) initMap();
+    const fix = () => {
+      if (!map) return;
+      map.invalidateSize();
+      if (pendingView) { map.setView([pendingView.lat, pendingView.lng], 17); pendingView = null; }
+      else if (first && window.MAP_BOUNDS) map.fitBounds(window.MAP_BOUNDS, { padding:[20,20] });
+    };
+    requestAnimationFrame(() => setTimeout(fix, 30));
   }
 }
 window.addEventListener('hashchange', route);
