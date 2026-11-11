@@ -8,7 +8,7 @@ on:
 
 permissions:
   contents: write
-  pages: write
+  actions: write
 
 jobs:
   update:
@@ -35,5 +35,5 @@ jobs:
           else
             git commit -m "Aktualizace dat o nehodách"
             git push
-            gh api -X POST "repos/${{ github.repository }}/pages/builds" || true
+          gh workflow run pages.yml --ref main
           fi
